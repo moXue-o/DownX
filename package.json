@@ -1,0 +1,18 @@
+{
+  "name": "downx",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "module": "src/index.ts",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "daemon": "bun run src/daemon.ts",
+    "build:bridge": "cargo build --manifest-path bridge/Cargo.toml --release",
+    "build:tui": "bun build --compile --outfile launcher/embed/downx-console.exe --windows-icon=launcher/icon.ico ./src/index.ts --external @opentui/core-darwin-x64 --external @opentui/core-darwin-arm64 --external @opentui/core-linux-x64 --external @opentui/core-linux-arm64 --external @opentui/core-win32-arm64 --external @opentui/core-linux-x64-musl --external @opentui/core-linux-arm64-musl",
+    "build:launcher": "cargo build --manifest-path launcher/Cargo.toml --release && bun -e \"const fs=require('node:fs');const p='launcher/target/release/downx.exe';fs.rmSync('downx.exe',{force:true});fs.copyFileSync(p,'downx.exe');fs.rmSync('launcher/embed',{recursive:true,force:true})\"",
+    "compile": "bun run build:bridge && bun run build:tui && bun run build:launcher"
+  },
+  "dependencies": {
+    "@opentui/core": "latest"
+  }
+}

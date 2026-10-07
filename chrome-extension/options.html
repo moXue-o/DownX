@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #ffffff;
+        --panel: #f6f7f9;
+        --border: #e3e6ea;
+        --text: #1f2328;
+        --muted: #6b7280;
+        --element: #eef0f3;
+        --hover: #e4e7eb;
+        --primary: #fab283;
+        --success: #16a34a;
+        --error: #dc2626;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 14px/1.6 system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
+      }
+      .wrap {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 26px 24px 56px;
+      }
+      h1 {
+        font-size: 19px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 4px;
+      }
+      h1 img {
+        width: 24px;
+        height: 24px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 12.5px;
+        margin-bottom: 20px;
+      }
+      .card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 0; /* 边框保持直角 */
+        padding: 4px 18px 16px;
+        margin-bottom: 16px;
+      }
+      h2 {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        margin: 16px 0 10px;
+      }
+      label {
+        display: block;
+        margin: 12px 0 4px;
+        font-size: 12.5px;
+        color: var(--muted);
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        background: var(--bg);
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        color: var(--text);
+        padding: 9px 11px;
+        outline: none;
+      }
+      input::placeholder {
+        color: #9aa4b2;
+      }
+      input:focus {
+        border-color: var(--primary);
+        box-shadow: inset 0 0 0 1px var(--primary);
+      }
+      .row {
+        display: flex;
+        gap: 16px;
+      }
+      .row > div {
+        flex: 1;
+        min-width: 0;
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 12px 0 4px;
+      }
+      .check input {
+        width: 17px;
+        height: 17px;
+        accent-color: #e9a271;
+      }
+      .check label {
+        margin: 0;
+        color: var(--text);
+        font-size: 13.5px;
+      }
+      button {
+        background: var(--primary);
+        color: #1a1a1a;
+        border: 1px solid #e9a271;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 13.5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #f8a774;
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-top: 20px;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .ok {
+        color: var(--success);
+      }
+      .err {
+        color: var(--error);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1><img src="icons/128.png" alt="" />DownX 扩展设置</h1>
+      <div class="sub">把浏览器的下载交给本地 DownX 多线程分段下载器</div>
+
+      <div class="card">
+        <h2>连接</h2>
+        <div class="row">
+          <div>
+            <label>后台端口</label>
+            <input id="port" type="number" min="1" max="65535" />
+          </div>
+          <div>
+            <label>状态</label>
+            <div id="status" class="muted" style="padding-top: 8px">检查中…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>行为</h2>
+        <div class="check">
+          <input id="intercept" type="checkbox" />
+          <label for="intercept">拦截浏览器下载，自动交给 DownX</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>DownX 设置（写入后台）</h2>
+        <div class="row">
+          <div>
+            <label>默认下载目录</label>
+            <input id="downloadDir" type="text" placeholder="留空 = 用 DownX 默认" />
+          </div>
+          <div>
+            <label>代理</label>
+            <input id="proxy" type="text" placeholder="http://host:port 或 socks5://…" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>并发连接数</label>
+            <input id="threads" type="number" min="1" max="64" />
+          </div>
+          <div>
+            <label>同时下载数</label>
+            <input id="maxConcurrent" type="number" min="1" max="32" />
+          </div>
+        </div>
+      </div>
+
+      <div class="bar">
+        <button id="save">保存</button>
+        <span id="msg" class="muted"></span>
+      </div>
+    </div>
+    <script src="options.js"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "DownX",
+  "version": "0.2.6",
+  "description": "把浏览器里的下载交给本地 DownX（多线程分段下载管理器）",
+  "permissions": ["contextMenus", "downloads", "storage", "notifications", "activeTab"],
+  "host_permissions": ["http://127.0.0.1/*"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html", "default_title": "DownX" },
+  "options_page": "options.html",
+  "icons": { "16": "icons/16.png", "48": "icons/48.png", "128": "icons/128.png" }
+}
