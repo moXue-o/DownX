@@ -9,6 +9,11 @@ launcher/embed/
 downx.exe
 downx-console.exe
 
+# 扩展打包产物（含私钥，绝不入库）
+dist/
+*.pem
+*.crx
+
 # 运行期/临时
 *.log
 _ico_*.png
