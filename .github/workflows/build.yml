@@ -1,0 +1,86 @@
+name: Build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # bridge 的 Cargo.toml 依赖绝对路径 E:/DownloadCode —— 这里 clone 引擎并用 subst 映射
+      - name: Clone DownloadCore → E:\DownloadCode
+        shell: pwsh
+        run: |
+          git clone --depth 1 https://github.com/moXue-o/DownloadCore C:\DownloadCore
+          subst E: C:\DownloadCore
+          if (-not (Test-Path E:\DownloadCode\Cargo.toml)) { throw "DownloadCore 没就位" }
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install deps
+        shell: pwsh
+        run: bun install
+
+      - name: Build（桥接 → 控制台程序 → 单文件 downx.exe）
+        shell: pwsh
+        run: bun run compile
+
+      # 扩展签名打包：把仓库私钥放到 Secrets 里的 CRX_KEY（PEM 全文），没配就跳过
+      - name: Pack Chrome extension（签名）
+        shell: pwsh
+        env:
+          CRX_KEY: ${{ secrets.CRX_KEY }}
+        run: |
+          if (-not $env:CRX_KEY) { Write-Warning "未配置 CRX_KEY，跳过扩展打包"; exit 0 }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          [IO.File]::WriteAllText("$PWD/dist/downx-extension.pem", $env:CRX_KEY)
+          $chrome = @(
+            "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
+            "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $chrome) { Write-Warning "找不到 Chrome，跳过扩展打包"; exit 0 }
+          & $chrome --pack-extension="$PWD\chrome-extension" --pack-extension-key="$PWD\dist\downx-extension.pem" --no-message-box
+          Start-Sleep -Seconds 2
+          if (Test-Path "$PWD\chrome-extension.crx") {
+            Copy-Item "$PWD\chrome-extension.crx" "$PWD\dist\downx-extension.crx" -Force
+            Remove-Item "$PWD\dist\downx-extension.pem" -Force
+            Write-Output "crx 已生成"
+          } else { throw "扩展打包失败" }
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: downx-${{ github.ref_name }}
+          if-no-files-found: warn
+          path: |
+            downx.exe
+            dist/downx-extension.crx
+
+      - name: Create / Update Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag --title "DownX $tag" --notes "由 GitHub Actions 自动构建。"
+          }
+          gh release upload $tag downx.exe --clobber
+          if (Test-Path dist/downx-extension.crx) { gh release upload $tag dist/downx-extension.crx --clobber }
+          Write-Output "已更新 Release $tag"

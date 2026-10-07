@@ -6,6 +6,10 @@
 
 <p align="center">终端界面的下载管理器 · 引擎用 <a href="https://github.com/moXue-o/DownloadCore">DownloadCore</a>（多线程分段 / 断点续传）</p>
 
+<p align="center">
+  <a href="https://github.com/moXue-o/DownX/actions/workflows/build.yml"><img src="https://github.com/moXue-o/DownX/actions/workflows/build.yml/badge.svg" alt="build"></a>
+</p>
+
 ## 界面
 
 ![DownX 界面](docs/screenshot.png)
