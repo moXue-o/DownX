@@ -19,9 +19,9 @@ jobs:
       - name: Clone DownloadCore → E:\DownloadCode
         shell: pwsh
         run: |
-          git clone --depth 1 https://github.com/moXue-o/DownloadCore C:\DownloadCore
-          subst E: C:\DownloadCore
-          if (-not (Test-Path E:\DownloadCode\Cargo.toml)) { throw "DownloadCore 没就位" }
+          git clone --depth 1 https://github.com/moXue-o/DownloadCore C:\eng\DownloadCode
+          subst E: C:\eng
+          if (-not (Test-Path E:\DownloadCode\Cargo.toml)) { throw "DownloadCore 没就位：E:\DownloadCode\Cargo.toml 不存在" }
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
