@@ -156,7 +156,12 @@ const MENU: Array<[string, string]> = [
 
 export async function runTui(client: Client): Promise<void> {
   tlog(`runTui start (port=${client.daemonPort})`);
-  const renderer: any = await createCliRenderer({ exitOnCtrlC: true, useMouse: true });
+  const renderer: any = await createCliRenderer({
+    exitOnCtrlC: true,
+    useMouse: true,
+    ...(process.env.DOWNX_COLS ? { width: Number(process.env.DOWNX_COLS) } : {}),
+    ...(process.env.DOWNX_ROWS ? { height: Number(process.env.DOWNX_ROWS) } : {}),
+  });
   tlog("renderer created");
 
   let tasks: TaskInfo[] = [];

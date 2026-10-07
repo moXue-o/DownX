@@ -1,4 +1,18 @@
-# DownX
+<p align="center">
+  <img src="docs/logo.png" width="96" alt="DownX" />
+</p>
+
+<h1 align="center">DownX</h1>
+
+<p align="center">终端界面的下载管理器 · 引擎用 <a href="https://github.com/moXue-o/DownloadCore">DownloadCore</a>（多线程分段 / 断点续传）</p>
+
+## 界面
+
+![DownX 界面](docs/screenshot.png)
+
+> 左侧筛选、中间任务卡（**名字-进度条-百分比** / 用时-速度-剩余）、右侧详情含**每个分段的进度**，底部输入框回车即开始下载。
+
+## 简介
 
 一个**终端界面的下载管理器**，引擎用我们的 Rust 库 [DownloadCore](https://github.com/moXue-o/DownloadCore)（多线程分段 / 断点续传）。
 
